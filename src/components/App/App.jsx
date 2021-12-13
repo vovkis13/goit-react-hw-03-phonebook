@@ -10,7 +10,7 @@ export default class App extends Component {
     contacts: [],
     filter: '',
   };
-
+  #contacts = 'contacts';
   addItemToContacts = (e, newName, newNumber) => {
     e.preventDefault();
     if (
@@ -33,20 +33,23 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    const parsedContacts = JSON.parse(localStorage.getItem('contacts'));
+    const parsedContacts = JSON.parse(localStorage.getItem(this.#contacts));
     if (parsedContacts) this.setState({ contacts: parsedContacts });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts)
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    const { contacts } = this.state;
+    const isUpdated = prevState.contacts !== contacts;
+    if (isUpdated) {
+      localStorage.setItem(this.#contacts, JSON.stringify(contacts));
+    }
   }
 
   deleteItemFromContacts = e => {
     e.preventDefault();
     this.setState(prevState => {
       const tempArr = prevState.contacts.filter(
-        contact => contact.id !== e.target.value,
+        ({ id }) => id !== e.target.value,
       );
       return { contacts: [...tempArr] };
     });
@@ -62,6 +65,7 @@ export default class App extends Component {
   setFilterValue = e => this.setState({ filter: e.target.value });
 
   render() {
+    const filteredContacts = this.filterContacts();
     return (
       <div>
         <h1>Phonebook</h1>
@@ -72,7 +76,7 @@ export default class App extends Component {
           onChangeFilterValue={this.setFilterValue}
         />
         <ContactList
-          filteredContacts={this.filterContacts()}
+          filteredContacts={filteredContacts}
           deleteContact={this.deleteItemFromContacts}
         />
       </div>
