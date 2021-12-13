@@ -15,7 +15,7 @@ export default function Contact({ contact, onDelete }) {
   );
 }
 Contact.propTypes = {
-  contact: PropTypes.objectOf({
+  contact: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     number: PropTypes.string.isRequired,
